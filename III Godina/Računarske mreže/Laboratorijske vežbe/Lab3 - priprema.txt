@@ -1,0 +1,29 @@
+Konfiguirisati mreže tako da budu zadovoljeni sledeći uslovi:
+
+1. Mreža Net1 je privatna sa adresama iz opsega 10.0.0.128/26
+
+2. Router0 ima prvu validnu adresu iz privatnog opsega
+
+3. Web server na mreži Net1 ima statičku adresu 10.0.0.130/26
+
+4. Ostali hostovi u mreži Net1 dinamički dobijaju podešavanja (adrese, maske i default gateway-a) od Router-a 0. Pool nazvati - lokal01, i isključiti adrese Web servera i rutera iz njega.
+
+5. Privatne adrese prevode se u javne na sledeći način:
+
+   - Web server uvek dobija adresu 220.20.11.10
+
+   - Ostali hostovi dobijaju adrese iz opsega 220.20.11.11-12 (pool adresa nazvati - net1)
+
+6. Mreža Net2 je privatna sa adresama iz opsega 192.168.5.0/24
+
+7. Router1 ima prvu validnu adresu iz privatnog opsega, a DHCP server drugu
+
+8. Ostali hostovi u mreži Net2 dinamički dobijaju podešavanja (adrese, maske i default gateway-a) od DHCP servera. Smeju se dodeljivati adrese iz opsega: 192.168.5.10 - 209 (ima ukupno 200 raspoloživih adresa). Modifikovati postojeći (default) pool.
+
+9. Privatne adrese prevode se u javne na sledeći način:
+
+   - Hostovi dobijaju adrese spoljašnjeg interfejsa Router-a 1
+
+10. Podesiti adrese interfejsa svih rutera na način prikazan na slici i uključiti RIPv2 protokol za dinamičko distribuiranje adresa mreža. Privatne mreže ne oglašavati.
+
+11. Proveriti funkcionalnost mreže otvaranjem Web stranice na Web serveru (Net1) sa hosta PC3 (Net2). (Proveriti da je je Web server aktivan; ako nije uključiti ga.)

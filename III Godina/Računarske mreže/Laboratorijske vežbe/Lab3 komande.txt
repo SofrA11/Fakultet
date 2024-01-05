@@ -1,0 +1,82 @@
+//Statički NAT
+config# ip nat inside source static _lokalan IP_ && _globalna IP_
+config-if# ip nat inside
+config-if# ip nat outside
+
+
+Static - podesava se u ruteru
+ip nat inside source static _lokalan IP_ && _globalna IP_
+ip nat inside
+ip nat outside
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//Dinamički NAT
+1. Definisanje pool-a
+config# ip nat pool <ime> <start_ip> <end_ip> {netmask <maska> | prefix-length <prefix_len>}
+
+2. Definisiati standardnu ACL
+config# access-list<acl_id> permit <source> [<source wildcard>]
+
+3.Aktiviranje dinamičkog NAT uz primennu ACL
+config# ip nat inside source list <acl_id> pool<name>
+
+4.Definisanje unutrašnjeg interfejsa
+config-if#ip nat inside
+
+5.Definisanje spoljašnjeg interfejsa
+config-if#ip nat outside
+
+
+1111 1111 1111 1111 1111 1111 1111 1000
+
+
+//dinamicki 
+ip nat pool local01 220.20.11.11 220.20.11.12 netmask 255.255.255.248
+access-list 1 permit 10.0.0.128 0.0.0.63
+ip nat inside source list 1 pool local01 
+ip nat inside
+ip nat outside
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//PAT
+1. Definisati standardnu ACL
+config# access-list <acl id> permit <source>[source wildcard]
+
+2. Aktivirati PAT sa adresom spoljašnjeg interfejsa
+config# ip nat inside source list<acl_ID> interface <int> overload
+
+ILI
+
+2. Definisati poll spoljašnjih adresa
+config# ip nat pool <name> <start_ip> <end_ip> {netmask <mask> | prefix-length <prefixlen>}
+config# ip nat inside source list <acl_id> pool <name> overload
+
+3.Definisanje unutrašnjeg interfejsa
+config-if#ip nat inside
+
+4.Definisanje spoljašnjeg interfejsa
+config-if#ip nat outside
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+//Postavljaju se adrese za ruter getway
+//radi se ip nat outside / outside
+//radi se staticka
+//Krece dinamicka 
+	//kreira se acl
+	//kreira se pool
+
+Router(config)#router rip
+Router(config-router)#version 2
+Router(config-router)#no auto-summ
+Router(config-router)#net 220.20.11.8
+Router(config-router)#exit
+
+// zavrsava se dinamicki NAT sa 3. korakom
+
+Router(config)#ip dhcp excluded-address 10.0.0.129 10.0.0.130
+Router(config)#ip dhcp pool lokal01
+Router(dhcp-config)#net 10.0.0.128 255.255.255.192
+Router(dhcp-config)#default-router 10.0.0.129

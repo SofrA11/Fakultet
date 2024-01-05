@@ -1,0 +1,24 @@
+en <=> enable
+disable
+config t <=> configure terminal
+exit 
+#config; int _Port_
+#config; rip rout
+#; show ip rout 
+#; show running config
+#; copy running config startup config
+#config-if; ip address _adresa_ & _maska_
+#config-if; no sh <=> no shutdown
+#config-if; clock rate _broj_ //samo na DCE data communication equipment
+#config; ip route _odredišna mreža_ & _mask_ & _adresa sl skoka | izlazni port_ //dodavanje Statičke rute
+#config; ip route 0.0.0.0 0.0.0.0 & _adresa sl skoka | izlazni port_
+
+/**----- RIP -----**/
+#config;router rip
+#config-router; version2
+#config-router; no auto-summary
+
+/**----- OSPF -----**/
+#config;router ospf _Process-id_ //Process-id moze biti razlicit za rutere iste mreze, ali se uglavnom koristi isti ID
+#config-router; router-id _X.X.X.X_ //vrednost u obliku ip adrese. To je jedinstveni identifikator.
+#config-router; network _broj mreze_ & _Wildcard_ & area & 0

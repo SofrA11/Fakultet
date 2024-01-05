@@ -1,0 +1,138 @@
+					;---ZADATAK IV---
+.386
+.model flat,c
+.data
+N dw 3
+M dw 4
+mat dw 150,5,9
+dw 2,6,10
+dw 6,7,11
+dw 4,8,12
+br dw 0
+.stack 4096
+.code
+main proc
+mov ax,N
+dec ax
+and eax,0ffh
+sal ax,2
+mov bx,mat[eax]
+
+mov cx,n
+and ecx,0ffh
+dec cx
+sal cx,1
+
+mov ax,m
+dec ax
+mul n
+sal ax,1
+and eax,0ffh
+
+pocetak:
+
+mov edi,0
+p1:
+cmp bx,mat[edi][ecx]
+jae nije
+inc br
+
+nije:
+mov esi,dword ptr n
+sal esi,1
+and esi,0ffh
+add edi,esi
+cmp eax,edi
+jae p1
+dec cx
+dec cx
+test cx,cx
+jns pocetak
+
+ret
+main endp
+end main
+
+					;--- ZADATAK V---
+					;---.C FAJL---
+
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+#include <time.h>
+extern void Menja(char, int*, int*, int*, int*);
+// argumenti redom: 1. broj elemenata b| 2. adresa niza | 3. adresa vrednosti koju ubacujemo
+// 4. donja granica segmeta | 5. gornja granica segmenta
+void main()
+{
+
+
+	char b;
+	printf("Unesi broj elemenata niza iz opsega -128 do 127 dekadno \n");
+	scanf("%d", &b);
+	int A;
+	//scanf("%d", &A);
+	A = 9;
+	int pom = b;
+	int* niz;
+	niz = malloc(pom * sizeof(int));
+	
+	for (int i = 0; i < pom; i++)
+		niz[i]= rand() % 127 +(-128) ;
+		//scanf("%d", &niz[i]);
+	Menja(b, niz, &A, niz, &niz[b - 1]);
+
+	for (int i = 0; i < b; i++)
+	{
+		printf("%d ", niz[i]);
+	}
+
+}
+
+					;---.ASM FAJL---
+.586
+.model flat, c
+.data 
+.stack 4096
+.code
+public Menja
+Menja proc
+push ebp
+mov ebp,esp
+pushfd
+push esi
+push edi
+push ebx
+push ecx
+mov ecx,[ebp+8];u ecx se mece broj elemenata niza b
+
+mov ebx,[ebp+16]
+mov ebx,[ebx]; u ebx se stavlja vrednost A koja se umece ako su ispunjeni sulovi
+
+mov esi,[ebp+12];prvi element niza tj niz
+
+mov edi,[ebp+24]
+mov edi,[edi];vrednost X
+
+mov edx,[ebp+20]
+mov edx,[edx];vrednost Y
+
+poc:;obilazak elemenata niza
+
+cmp edi,[esi]; da li je X>niz[esi]
+jbe kraj; ako nije skace na kraj esi++
+cmp edx,[esi]; da li je Y<niz[esi]
+jae kraj;ako nije skace na kraj esi++
+mov [esi],ebx; ako su oba uslova ispunjena, TREN se menja sa A
+kraj:
+add esi,4; efektivno i++
+loop poc
+pop ecx
+pop ebx
+pop edi
+pop esi
+popfd
+pop ebp
+ret
+Menja endp
+end

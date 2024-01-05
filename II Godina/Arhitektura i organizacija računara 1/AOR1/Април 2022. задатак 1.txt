@@ -1,0 +1,46 @@
+.386
+.model flat, c
+.data
+x dd 3
+y dd 3
+z dd 4
+.stack 4096
+.code
+main proc
+
+mov esi,0
+
+gore:
+mov eax,x
+mov ebx,y
+cmp eax,ebx
+jb kraj
+cmp esi,100
+ja kraj
+
+;racuna se X
+shl eax,2
+inc ebx
+mov edx,0
+idiv ebx
+
+mov ecx,eax
+sar ecx,31
+xor eax,ecx
+sub eax,ecx
+mov x,eax
+
+;racuna se Y
+mov eax,y
+mov ebx,z
+shr eax,1
+shr ebx,2
+
+add eax,ebx
+mov y,eax
+inc esi
+jmp gore
+kraj:
+inc eax
+main endp
+end main

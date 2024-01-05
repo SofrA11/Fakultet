@@ -1,0 +1,74 @@
+.386
+.model flat, c
+.data
+mat dd 1,2,3
+dd 4,5,6
+dd 70,8,9
+n dd 3
+.stack 4096
+.code
+poredi proc
+push ebp
+mov ebp,esp
+pushfd
+push ebx
+mov eax,[ebp+12]
+mov eax,[eax]
+mov ebx,[ebp+8]
+mov ebx,[ebx]
+cmp eax,ebx
+jz jednaki
+jb pmanji
+jmp dmanji
+jednaki:
+	mov eax,0
+	jmp kraj
+pmanji:
+	mov eax,1
+	jmp kraj
+dmanji:
+mov eax,2
+kraj:
+pop ebx
+popfd
+pop ebp
+ret 8
+poredi endp
+
+main proc
+
+mov ecx,n
+dec ecx
+mov edi,0
+mov edx,ecx
+sal edx,2
+
+spoljasnja:
+	push edi
+	mov ecx,n
+	dec ecx
+	mov esi,edi
+	un:
+		lea eax,mat[esi]
+		push eax
+		mov ebx,n
+		shl ebx,2
+		lea eax,mat[esi][ebx]
+		push eax
+		call poredi
+		cmp eax,1
+		
+		jne kraj
+			lea eax,mat[esi]
+			mov edi,mat[esi][ebx]
+			mov [eax],edi
+		kraj:
+		add esi,ebx
+	loop un
+pop edi
+add edi,4
+cmp edx,edi
+jae spoljasnja
+ret
+main endp
+end main

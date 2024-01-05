@@ -1,0 +1,71 @@
+;---.ASM FAJL---
+.386
+.model flat,c
+.data
+.stack 4096
+.code
+public Ponavljanje
+Ponavljanje proc
+push ebp
+mov ebp,esp
+pushfd
+push ecx
+push ebx
+push edx
+push edi
+push esi
+mov eax,0
+mov edx,[ebp+8]
+mov bl,[edx]
+add edx,1
+gore:
+mov cl,[edx]
+cmp bl,cl
+jne kraj
+inc eax
+add edx,1
+jmp gore
+kraj:
+inc eax
+pop esi
+pop edi
+pop edx
+pop ebx
+pop ecx
+popfd
+pop ebp
+ret
+Ponavljanje endp
+end 
+
+;---.C FAJL---
+#include<stdio.h>
+#include <string.h>
+#include <stdlib.h>
+extern int Ponavljanje(char*);
+void main()
+{
+	char novi_string[100], string[100];
+	int i = 0, br_pon, j = 0, k;
+	scanf("%s", &string);
+
+	while (i < strlen(string))
+	{
+		br_pon = Ponavljanje(&string[i]);
+		if (br_pon <= 2)
+		{
+			for (k = 0; k < br_pon; k++)
+				novi_string[j++] = string[i];
+			novi_string[j] = '\0';
+		}
+		else
+		{
+			novi_string[j++] = br_pon;
+			novi_string[j++] = string[i];
+			novi_string[j] = '\0';
+		}
+		i += br_pon;
+	}
+	printf("%s", novi_string);
+
+}

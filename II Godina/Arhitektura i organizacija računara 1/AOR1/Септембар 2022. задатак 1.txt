@@ -1,0 +1,48 @@
+.386
+.model flat,c
+.data
+n dw 7
+suma dq 0
+.code
+main proc
+mov ecx,dword ptr n
+mov edi,0
+poc:
+	mov eax,ecx
+	mov ebx,ecx
+	sal ebx,1
+	inc ebx
+	mov edx,0
+	mul ebx;daje dobar rezultat 1
+
+	mov ebx,ecx
+	shl ebx,1
+	add ebx,ecx
+	inc ebx
+	mov edx,0
+	mul ebx;daje dobar rezultat 1
+
+	mov ebx,ecx
+	mov edx,0
+	inc ebx
+	div ebx;daje dobar rezultat 1
+
+	mov ebx,ecx
+	and ebx,01h
+	cmp ebx,0
+	je paran
+	sub edi,eax
+	jmp neparan
+	paran:
+	add edi,eax
+	neparan:
+	dec ecx
+	cmp ecx,2
+jae poc
+
+lea eax,suma
+mov [eax],edi
+
+ret
+main endp
+end main

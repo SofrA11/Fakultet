@@ -1,0 +1,117 @@
+CREATE TABLE TURISTA
+(
+ID NUMBER(10) PRIMARY KEY,
+IME VARCHAR2(25),
+PREZIME VARCHAR2(35),
+POL VARCHAR2(2),
+ADRESA VARCHAR2(25),
+GRAD VARCHAR2(25),
+DRZAVA VARCHAR2(25)
+);
+
+INSERT INTO TURISTA (ID, IME, PREZIME, POL, ADRESA, GRAD, DRZAVA) VALUES ('5147128877', 'Marko', 'Marinkovic', 'M', 'Niska Ulica', 'Nis', 'Srbija');
+INSERT INTO TURISTA (ID, IME, PREZIME, POL, ADRESA, GRAD, DRZAVA) VALUES ('2381115237', 'Janko', 'Jankovic', 'M', 'Novosadska', 'Novi Sad', 'Srbija');
+INSERT INTO TURISTA (ID, IME, PREZIME, POL, ADRESA, GRAD, DRZAVA) VALUES ('9919492764', 'Petra', 'Peric', 'Z', 'Beogradska', 'Beograd', 'Srbija');
+INSERT INTO TURISTA (ID, IME, PREZIME, POL, ADRESA, GRAD, DRZAVA) VALUES ('1562737191', 'Jova', 'Jovic', 'M', 'Aleksinacka', 'Aleksinac', 'Srbija');
+INSERT INTO TURISTA (ID, IME, PREZIME, POL, ADRESA, GRAD, DRZAVA) VALUES ('5713688295', 'Svetlana', 'Spasic', 'Z', 'Knjazevacka', 'Knjazevac', 'Srbija');
+
+
+CREATE TABLE HOTEL 
+(
+ID NUMBER(10) PRIMARY KEY,
+NAZIV VARCHAR2(25),
+KAPACITET NUMBER(5),
+BROJ_ZVEZDICA NUMBER(5),
+NA_OBALI VARCHAR2(3),
+ADRESA VARCHAR2(25),
+GRAD VARCHAR2(25),
+DRZAVA VARCHAR2(25)
+);
+
+INSERT INTO HOTEL (ID, NAZIV, KAPACITET, BROJ_ZVEZDICA, NA_OBALI, ADRESA, GRAD, DRZAVA) VALUES ('9384835696', 'Grand Hotel', '500', '5', 'Da', 'Adresa1', 'Pariz', 'Francuska');
+INSERT INTO HOTEL (ID, NAZIV, KAPACITET, BROJ_ZVEZDICA, NA_OBALI, ADRESA, GRAD, DRZAVA) VALUES ('7845495137', 'Ambasador', '450', '4', 'Ne', 'Adresa2', 'London', 'Engleska');
+INSERT INTO HOTEL (ID, NAZIV, KAPACITET, BROJ_ZVEZDICA, NA_OBALI, ADRESA, GRAD, DRZAVA) VALUES ('4345426765', 'Gornja Toponica', '480', '10', 'Da', 'Adresa3', 'Lisabon', 'Portugal');
+INSERT INTO HOTEL (ID, NAZIV, KAPACITET, BROJ_ZVEZDICA, NA_OBALI, ADRESA, GRAD, DRZAVA) VALUES ('6484913814', 'Staracki Dom', '125', '2', 'Ne', 'Adresa4', 'Kijev', 'Ukraina');
+INSERT INTO HOTEL (ID, NAZIV, KAPACITET, BROJ_ZVEZDICA, NA_OBALI, ADRESA, GRAD, DRZAVA) VALUES ('9735875796', 'Deluxe', '50', '7', 'Ne', 'Adresa5', 'Moskva', 'Rusija');
+
+CREATE TABLE TURISTA_HOTEL
+(
+TURISTA_ID NUMBER(10),
+HOTEL_ID NUMBER(10),
+CONSTRAINT TURISTA_HOTEL_PK PRIMARY KEY(TURISTA_ID,HOTEL_ID),
+CONSTRAINT TURISTA_ID_FK FOREIGN KEY(TURISTA_ID ) REFERENCES TURISTA(ID),
+CONSTRAINT HOTEL_ID_FK FOREIGN KEY(HOTEL_ID ) REFERENCES HOTEL(ID)
+);
+
+INSERT INTO TURISTA_HOTEL (TURISTA_ID, HOTEL_ID) VALUES ('5147128877', '9384835696');
+INSERT INTO TURISTA_HOTEL (TURISTA_ID, HOTEL_ID) VALUES ('2381115237', '7845495137');
+INSERT INTO TURISTA_HOTEL (TURISTA_ID, HOTEL_ID) VALUES ('9919492764', '4345426765');
+INSERT INTO TURISTA_HOTEL (TURISTA_ID, HOTEL_ID) VALUES ('1562737191', '6484913814');
+INSERT INTO TURISTA_HOTEL (TURISTA_ID, HOTEL_ID) VALUES ('5713688295', '9384835696');
+
+1.
+CREATE VIEW REZERVACIJE_TURISTA AS
+SELECT T.ID, T.IME, T.PREZIME, T.DRZAVA, COUNT(R.HOTEL_ID) AS BROJ_HOTELA
+FROM TURISTA T INNER JOIN TURISTA_HOTEL R ON T.ID = R.TURISTA_ID
+GROUP BY T.ID, T.IME, T.PREZIME, T.DRZAVA;
+
+SELECT ID, IME, PREZIME, DRZAVA,BROJ_HOTELA
+FROM REZERVACIJE_TURISTA
+WHERE BROJ_HOTELA=(SELECT MAX(BROJ_HOTELA) FROM REZERVACIJE_TURISTA);
+
+2.
+UPDATE HOTEL
+SET HOTEL.GRAD='Beograd BB' WHERE HOTEL.GRAD='Pariz'
+
+3.
+DELETE
+FROM TURISTA_HOTEL 
+WHERE TURISTA_ID IN(SELECT TURISTA.ID FROM TURISTA INNER JOIN TURISTA_HOTEL ON ID=TURISTA_ID WHERE DRZAVA='Kina') AND 
+HOTEL_ID IN (SELECT HOTEL.ID FROM HOTEL INNER JOIN TURISTA_HOTEL ON ID=HOTEL_ID WHERE GRAD='London');
+
+4. 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Oracle.ManagedDataAccess.Client;
+
+namespace ConsoleApp2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try {
+                string konekcija = "Data Source=160.99.12.92/GISLAB_PD; User Id=S18895;Password=MihajloBaze22;";
+                OracleConnection con = new OracleConnection(konekcija);
+
+                string naziv;
+                Console.WriteLine("Unesi naziv hotela ");
+                naziv = Console.ReadLine();
+
+                con.Open();
+                string komanda = "SELECT TURISTA.IME,TURISTA.PREZIME  FROM TURISTA INNER JOIN TURISTA_HOTEL ON TURISTA.ID=TURISTA_HOTEL.TURISTA_ID INNER JOIN HOTEL ON HOTEL.ID=TURISTA_HOTEL.HOTEL_ID"
+                    + " WHERE TURISTA.DRZAVA = 'Srbija' AND NAZIV ='" + naziv + "'";
+                OracleCommand cmd = new OracleCommand(komanda, con);
+                OracleDataReader r = cmd.ExecuteReader();
+
+                while(r.Read())
+                {
+                    string ime, prezime;
+                    ime = r.GetString(0);
+                    prezime = r.GetString(1);
+                    Console.WriteLine("Ime i Prezime:" + ime + " "+prezime);
+
+                }
+                r.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Doslo je do greske prilikom pristupanja bazi podataka: " + ex.Message);
+            }
+
+        }
+    }
+}

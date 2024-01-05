@@ -1,0 +1,39 @@
+.386
+.model flat,c
+.data
+x dd 50
+y dd 4
+z dd 4
+.code
+main proc
+
+mov ecx,100
+gore:
+mov eax,x
+shl eax,2
+
+mov ebx,y
+inc ebx
+
+mov edx,0
+idiv ebx
+mov x,eax
+
+mov eax,y 
+sar eax,1
+mov ebx,z
+shr ebx,2
+add eax,ebx
+mov y,eax
+cmp x,eax
+jb lab
+jmp kraj
+lab:
+mov ecx,1
+kraj:
+loop gore
+
+
+ret
+main endp
+end main

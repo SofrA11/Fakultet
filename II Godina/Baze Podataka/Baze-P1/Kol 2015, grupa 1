@@ -1,0 +1,46 @@
+create table predmet(
+id number(10) PRIMARY KEY,
+naziv varchar2(30) not null,
+tip varchar2(9),
+godina date not null,
+opis varchar2(200)
+);
+
+create table aukcija(
+id number(10) primary key,
+datum_otvaranja date,
+datum_zatvaranja date,
+naziv varchar2(50),
+opis varchar2(200)
+);
+create table predmeti_na_aukciji(
+aukcija_id NUMBER(10) not null,
+constraint aukcija_id foreign key(aukcija_id) references aukcija(id),
+predmet_id number(10) not null,
+constraint predmet_id foreign key(predmet_id) references predmet(id),
+pocetna_cena number not null,
+prodajna_cena number not null,
+constraint aukcija_pk PRIMARY KEY (aukcija_id,predmet_id)
+);
+
+2.
+select predmet.id,predmet.naziv,predmet.tip,predmet.godina,predmet.opis,predmeti_na_aukciji.prodajna_cena-predmeti_na_aukciji.pocetna_cena as zarada
+from predmet left outer join predmeti_na_aukciji on predmet.id=predmeti_na_aukciji.predmet_id
+where predmeti_na_aukciji.prodajna_cena-predmeti_na_aukciji.pocetna_cena < 100
+order by zarada desc;
+
+3.
+select predmet.naziv,predmeti_na_aukciji.prodajna_cena-predmeti_na_aukciji.pocetna_cena as zarada,aukcija.naziv,aukcija.opis
+from predmet join predmeti_na_aukciji on predmet.id=predmeti_na_aukciji.predmet_id join aukcija on aukcija.id=predmeti_na_aukciji.aukcija_id
+where predmet.tip='slika'
+order by datum_otvaranja desc; 
+
+4.
+SELECT AUKCIJA.NAZIV,AUKCIJA.DATUM_OTVARANJA
+FROM PREDMET JOIN PREDMETI_NA_AUKCIJI ON PREDMET.ID=PREDMETI_NA_AUKCIJI.PREDMET_ID JOIN AUKCIJA ON AUKCIJA.ID=PREDMETI_NA_AUKCIJI.AUKCIJA_ID
+WHERE PREDMET.TIP='slika'
+MINUS
+SELECT  AUKCIJA.NAZIV,AUKCIJA.DATUM_OTVARANJA
+FROM PREDMET JOIN PREDMETI_NA_AUKCIJI ON PREDMET.ID=PREDMETI_NA_AUKCIJI.PREDMET_ID JOIN AUKCIJA ON AUKCIJA.ID=PREDMETI_NA_AUKCIJI.AUKCIJA_ID
+ WHERE PREDMET.TIP='skulptura';
+ 

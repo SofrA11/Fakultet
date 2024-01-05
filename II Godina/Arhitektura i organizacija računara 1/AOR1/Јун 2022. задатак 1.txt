@@ -1,0 +1,92 @@
+;---|I NACIN|---
+.386
+.model flat,c
+.data
+x dd 20
+n dd 15
+p db 3
+k dd 1
+rez dd ?
+.code
+main proc
+
+mov esi,1
+mov cl,p
+shl esi,cl
+dec esi
+
+mov cl,32
+sub cl,p
+mov edi,esi
+shl edi,cl
+
+mov ecx,n
+
+petlja:
+mov eax,x
+mov ebx,k
+and ebx,esi
+
+add eax,ebx
+
+mov edx,0
+mov edx,x
+mov ebx,k
+and ebx,edi
+sub edx,ebx
+
+mov ebx,edx
+mov edx,0
+div ebx
+add rez,eax
+inc k
+loop petlja
+nop
+ret
+main endp
+end main
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+;---|II NACIN|---
+
+.386 
+.model flat, c
+.data
+	N dd 15
+	x dd 20
+	p db 3
+	k dd 1
+	a dd 0
+	b dd 0
+	suma dd 0
+.code
+	main proc
+		mov cl, p
+		mov esi, 1
+		shl esi, cl
+		dec esi; u esi je maska kojom se sredjuje nizih p bitova
+		mov cl, 32
+		sub cl, p
+		mov edi, esi
+		shl edi, cl; u edi je maska kojom se maskira visih p bitova
+	
+		mov ecx, N
+		gore:
+			mov ebx, k
+			and ebx, esi
+			mov a, ebx
+			mov ebx, k
+			and ebx, edi
+			mov b, ebx
+			mov ebx, x
+			sub ebx, b
+			mov eax, x
+			add eax, a
+			mov edx, 0
+			div ebx
+			add suma, eax
+			inc k
+		loop gore
+		nop
+		ret
+	main endp
+	end main

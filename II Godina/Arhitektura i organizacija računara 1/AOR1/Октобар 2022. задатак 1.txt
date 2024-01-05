@@ -1,0 +1,70 @@
+;---I NACIN---
+.386
+.model flat,c 
+.data
+n dd 5
+sum dd 0
+
+.code
+main proc
+
+mov edi,n
+mov ecx,0
+pocetak:
+cmp edi,0
+jz kraj
+inc ecx
+mov eax,n
+mov edx,0
+mul ecx
+dec ecx
+shr eax,cl
+add sum,eax
+dec edi
+inc ecx
+jmp pocetak
+
+kraj:
+nop
+ret
+main endp
+end main
+--------------------------------------------------------
+;---II NACIN---
+.386
+.model flat,c
+.data
+
+n dd 5
+suma dd 0
+k dd 1;krece se od  1 do n
+
+.code
+main proc
+
+	lea eax,n
+	mov ebx,[eax];u ebx je n
+	mov esi,k;esi=ecx
+	mov ecx,esi;koristi se kao brojac kod stepenovanja
+	mov edi,suma
+	uslov:
+	cmp esi,ebx
+		ja kraj
+
+			mov edx,0
+			mov eax,n
+			mul esi;brojilac
+			mov ecx,esi
+			dec ecx;broji od 0 do n-1
+			shr eax,cl
+			add edi,eax
+
+		inc esi
+	jmp uslov
+
+	kraj:
+	mov suma,edi
+	nop
+
+main endp
+end main 
